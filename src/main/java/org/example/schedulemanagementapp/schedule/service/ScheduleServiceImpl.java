@@ -21,7 +21,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ScheduleBaseResponse save(ScheduleBaseRequest request) {
         Schedule schedule = new Schedule(
-                request.getUsername(),
+                request.getUserId(),
                 request.getTitle(),
                 request.getContent()
         );
@@ -50,12 +50,10 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Transactional
     @Override
     public ScheduleBaseResponse updateScheduleById(Long scheduleId, SchedulerUpdateRequest request) {
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalArgumentException("Schedule Not Found!")
-        );
+        Schedule schedule = findScheduleByIdOrThrow(scheduleId);
 
         schedule.update(
-                request.getUsername() != null ? request.getUsername() : schedule.getUsername(),
+                request.getUserId() != null ? request.getUserId() : schedule.getUserId(),
                 request.getTitle() != null ? request.getTitle() : schedule.getTitle(),
                 request.getContent() != null ? request.getContent() : schedule.getContent()
         );
@@ -66,11 +64,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Transactional
     @Override
     public void deleteScheduleById(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalArgumentException("Schedule Not Found!")
-        );
+        Schedule schedule = findScheduleByIdOrThrow(scheduleId);
         scheduleRepository.delete(schedule);
     }
 
-
+    private Schedule findScheduleByIdOrThrow(Long scheduleId) {
+        return scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalArgumentException("Schedule Not Found!")
+        );
+    }
 }
