@@ -9,30 +9,30 @@ import java.time.LocalDateTime;
 @Getter
 public class ScheduleGetOneResponse {
     private final Long id;
-    private final String username;
+    private final Long userId;
     private final String title;
     private final String content;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
 
-    private ScheduleGetOneResponse(Long id, String username, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    private ScheduleGetOneResponse(Long id, Long userId, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
-        this.username = username;
+        this.userId = userId;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
     }
 
-    public static ScheduleGetOneResponse of(Long id, String username, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
-        return new ScheduleGetOneResponse(id, username, title, content, createdAt, modifiedAt);
+    public static ScheduleGetOneResponse of(Long id, Long userId, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+        return new ScheduleGetOneResponse(id, userId, title, content, createdAt, modifiedAt);
     }
 
     public static ScheduleGetOneResponse of(Schedule schedule) {
 
         return new ScheduleGetOneResponse(
                 schedule.getId(),
-                schedule.getUsername(),
+                schedule.getUserId(),
                 schedule.getTitle(),
                 schedule.getContent(),
                 schedule.getCreatedAt(),

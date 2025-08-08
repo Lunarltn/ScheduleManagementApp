@@ -21,7 +21,8 @@ public class UserServiceImpl implements UserService {
     public UserBaseResponse save(UserBaseRequest request) {
         User user = new User(
                 request.getUsername(),
-                request.getEmail()
+                request.getEmail(),
+                request.getPassword()
         );
 
         User savedUser = userRepository.save(user);
@@ -52,7 +53,8 @@ public class UserServiceImpl implements UserService {
 
         user.update(
                 request.getUsername() != null ? request.getUsername() : user.getUsername(),
-                request.getEmail() != null ? request.getEmail() : user.getEmail()
+                request.getEmail() != null ? request.getEmail() : user.getEmail(),
+                request.getPassword() != null ? request.getPassword() : user.getPassword()
         );
 
         return UserBaseResponse.of(user);
