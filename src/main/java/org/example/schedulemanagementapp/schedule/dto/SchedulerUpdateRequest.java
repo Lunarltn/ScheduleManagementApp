@@ -3,6 +3,7 @@ package org.example.schedulemanagementapp.schedule.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+// 일정 수정 요청 DTO
 @Getter
 @NoArgsConstructor
 public class SchedulerUpdateRequest {

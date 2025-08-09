@@ -11,6 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * {@link UserService}를 구현체
+ *
+ * <p>JPA를 사용하여 데이터를 데이터베이스에 저장, 조회, 수정, 삭제하는 기능 제공</p>
+ */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -67,6 +72,12 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
+    /**
+     * 레포지토리에서 아이디를 찾아 유저 엔티티를 반환하고 없다면 예외 발생
+     *
+     * @param userId 유저 아이디
+     * @return 유저 엔티티
+     */
     private User findUserByIdOrThrow(Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new IllegalArgumentException("User Not Found!"));

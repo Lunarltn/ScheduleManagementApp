@@ -3,6 +3,7 @@ package org.example.schedulemanagementapp.user.dto;
 import lombok.Getter;
 import org.example.schedulemanagementapp.user.entity.User;
 
+// 유저 기본 응답 DTO
 @Getter
 public class UserBaseResponse {
     private final Long id;

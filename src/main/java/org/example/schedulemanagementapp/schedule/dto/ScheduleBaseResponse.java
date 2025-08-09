@@ -6,6 +6,7 @@ import org.example.schedulemanagementapp.schedule.entity.Schedule;
 
 import java.time.LocalDateTime;
 
+// 일정 기본 응답 DTO
 @Getter
 public class ScheduleBaseResponse {
     private final Long id;

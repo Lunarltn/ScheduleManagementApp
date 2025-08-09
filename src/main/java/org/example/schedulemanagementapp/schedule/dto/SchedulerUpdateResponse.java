@@ -6,6 +6,7 @@ import org.example.schedulemanagementapp.schedule.entity.Schedule;
 
 import java.time.LocalDateTime;
 
+// 일정 수정 응답 DTO
 @Getter
 public class SchedulerUpdateResponse {
     private final Long id;

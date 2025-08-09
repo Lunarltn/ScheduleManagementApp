@@ -12,6 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * {@link ScheduleService}의 구현체
+ *
+ * <p>JPA를 사용하여 데이터를 데이터베이스에 저장, 조회, 수정, 삭제하는 기능 제공</p>
+ */
 @Service
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
@@ -68,6 +73,12 @@ public class ScheduleServiceImpl implements ScheduleService {
         scheduleRepository.delete(schedule);
     }
 
+    /**
+     * 레포지토리에서 아이디를 찾아 일정 엔티티를 반환하고 없다면 예외 발생
+     *
+     * @param scheduleId 일정 아이디
+     * @return 일정 엔티티
+     */
     private Schedule findScheduleByIdOrThrow(Long scheduleId) {
         return scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalArgumentException("Schedule Not Found!")

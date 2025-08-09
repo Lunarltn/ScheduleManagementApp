@@ -9,6 +9,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.schedulemanagementapp.common.entity.BaseEntity;
 
+/**
+ * 일정 엔티티
+ *
+ * <p>사용자 ID, 제목, 내용,  생성/수정 시간을 관리한다</p>
+ */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
