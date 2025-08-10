@@ -1,18 +1,15 @@
 package org.example.schedulemanagementapp.user.dto;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// 유저 기본 요청 DTO
+// 유저 로그인 요청 DTO
 @Getter
 @NoArgsConstructor
-public class UserBaseRequest {
+public class UserLoginRequest {
     @NotNull
     private String username;
-    @Email
-    private String email;
     @NotNull
     private String password;
 }

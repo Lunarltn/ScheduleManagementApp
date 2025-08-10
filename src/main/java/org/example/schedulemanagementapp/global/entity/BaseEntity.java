@@ -1,4 +1,4 @@
-package org.example.schedulemanagementapp.common.entity;
+package org.example.schedulemanagementapp.global.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,6 +8,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+/**
+ * 기본 엔티티
+ *
+ * <p>생성/수정 날짜의 자동 생성을 관리한다.</p>
+ */
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)

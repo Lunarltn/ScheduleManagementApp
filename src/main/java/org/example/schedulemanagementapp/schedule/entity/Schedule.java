@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.schedulemanagementapp.common.entity.BaseEntity;
+import org.example.schedulemanagementapp.global.entity.BaseEntity;
 
 /**
  * 일정 엔티티

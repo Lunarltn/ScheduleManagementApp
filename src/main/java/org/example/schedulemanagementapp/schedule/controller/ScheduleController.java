@@ -25,12 +25,12 @@ public class ScheduleController {
     /**
      * 새로운 일정 저장
      *
-     * @param request 일정 기본 요청 DTO
+     * @param dto 일정 기본 요청 DTO
      * @return HTTP 상태 코드와 일정 기본 응답 DTO
      */
     @PostMapping
-    public ResponseEntity<ScheduleBaseResponse> save(@RequestBody ScheduleBaseRequest request) {
-        return new ResponseEntity<>(scheduleService.save(request), HttpStatus.CREATED);
+    public ResponseEntity<ScheduleBaseResponse> save(@RequestBody ScheduleBaseRequest dto) {
+        return new ResponseEntity<>(scheduleService.save(dto), HttpStatus.CREATED);
     }
 
     /**
@@ -58,12 +58,12 @@ public class ScheduleController {
      * 일정 수정
      *
      * @param scheduleId 일정 아이디
-     * @param request    일정 수정 요청 DTO
+     * @param dto        일정 수정 요청 DTO
      * @return HTTP 상태 코드와 일정 기본 응답 DTO
      */
     @PatchMapping("/{scheduleId}")
-    public ResponseEntity<ScheduleBaseResponse> updateScheduleById(@PathVariable Long scheduleId, @RequestBody SchedulerUpdateRequest request) {
-        return ResponseEntity.ok(scheduleService.updateScheduleById(scheduleId, request));
+    public ResponseEntity<ScheduleBaseResponse> updateScheduleById(@PathVariable Long scheduleId, @RequestBody SchedulerUpdateRequest dto) {
+        return ResponseEntity.ok(scheduleService.updateScheduleById(scheduleId, dto));
     }
 
     /**

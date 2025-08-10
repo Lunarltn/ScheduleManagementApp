@@ -1,13 +1,10 @@
 package org.example.schedulemanagementapp.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.schedulemanagementapp.common.entity.BaseEntity;
+import org.example.schedulemanagementapp.global.entity.BaseEntity;
 
 /**
  * 유저 엔티티
@@ -21,8 +18,11 @@ public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true, nullable = false)
     private String username;
+    @Column(unique = true, nullable = false)
     private String email;
+    @Column(nullable = false)
     private String password;
 
     public User(String username, String email, String password) {

@@ -2,6 +2,7 @@ package org.example.schedulemanagementapp.user.service;
 
 import org.example.schedulemanagementapp.user.dto.UserBaseRequest;
 import org.example.schedulemanagementapp.user.dto.UserBaseResponse;
+import org.example.schedulemanagementapp.user.dto.UserLoginResponse;
 
 import java.util.List;
 
@@ -14,10 +15,10 @@ public interface UserService {
     /**
      * 새로운 유저 저장
      *
-     * @param request 유저 기본 요청 DTO
+     * @param dto 유저 기본 요청 DTO
      * @return 유저 기본 응답 DTO
      */
-    UserBaseResponse save(UserBaseRequest request);
+    UserBaseResponse save(UserBaseRequest dto);
 
     /**
      * 전체 유저 조회
@@ -37,11 +38,11 @@ public interface UserService {
     /**
      * 유저 수정
      *
-     * @param userId  유저 아이디
-     * @param request 유저 기본 요청 DTO
+     * @param userId 유저 아이디
+     * @param dto    유저 기본 요청 DTO
      * @return 유저 기본 응답 DTO
      */
-    UserBaseResponse updateUserById(Long userId, UserBaseRequest request);
+    UserBaseResponse updateUserById(Long userId, UserBaseRequest dto);
 
     /**
      * 유저 삭제
@@ -49,4 +50,14 @@ public interface UserService {
      * @param userId 유저 아이디
      */
     void deleteUserById(Long userId);
+
+    /**
+     * 사용자 로그인
+     * <p>username과 password를 검사해서 응답 DTO 반환</p>
+     *
+     * @param username 유저 이름
+     * @param password 비밀 번호
+     * @return 유저 로그인 응답 DTO
+     */
+    UserLoginResponse login(String username, String password);
 }

@@ -24,11 +24,11 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Transactional
     @Override
-    public ScheduleBaseResponse save(ScheduleBaseRequest request) {
+    public ScheduleBaseResponse save(ScheduleBaseRequest dto) {
         Schedule schedule = new Schedule(
-                request.getUserId(),
-                request.getTitle(),
-                request.getContent()
+                dto.getUserId(),
+                dto.getTitle(),
+                dto.getContent()
         );
 
         Schedule savedSchedule = scheduleRepository.save(schedule);
@@ -54,13 +54,13 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Transactional
     @Override
-    public ScheduleBaseResponse updateScheduleById(Long scheduleId, SchedulerUpdateRequest request) {
+    public ScheduleBaseResponse updateScheduleById(Long scheduleId, SchedulerUpdateRequest dto) {
         Schedule schedule = findScheduleByIdOrThrow(scheduleId);
 
         schedule.update(
-                request.getUserId() != null ? request.getUserId() : schedule.getUserId(),
-                request.getTitle() != null ? request.getTitle() : schedule.getTitle(),
-                request.getContent() != null ? request.getContent() : schedule.getContent()
+                dto.getUserId() != null ? dto.getUserId() : schedule.getUserId(),
+                dto.getTitle() != null ? dto.getTitle() : schedule.getTitle(),
+                dto.getContent() != null ? dto.getContent() : schedule.getContent()
         );
 
         return ScheduleBaseResponse.of(schedule);

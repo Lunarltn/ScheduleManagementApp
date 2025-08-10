@@ -3,6 +3,7 @@ package org.example.schedulemanagementapp.user.service;
 import lombok.RequiredArgsConstructor;
 import org.example.schedulemanagementapp.user.dto.UserBaseRequest;
 import org.example.schedulemanagementapp.user.dto.UserBaseResponse;
+import org.example.schedulemanagementapp.user.dto.UserLoginResponse;
 import org.example.schedulemanagementapp.user.entity.User;
 import org.example.schedulemanagementapp.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,11 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserBaseResponse save(UserBaseRequest request) {
+    public UserBaseResponse save(UserBaseRequest dto) {
         User user = new User(
-                request.getUsername(),
-                request.getEmail(),
-                request.getPassword()
+                dto.getUsername(),
+                dto.getEmail(),
+                dto.getPassword()
         );
 
         User savedUser = userRepository.save(user);
@@ -53,13 +54,13 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserBaseResponse updateUserById(Long userId, UserBaseRequest request) {
+    public UserBaseResponse updateUserById(Long userId, UserBaseRequest dto) {
         User user = findUserByIdOrThrow(userId);
 
         user.update(
-                request.getUsername() != null ? request.getUsername() : user.getUsername(),
-                request.getEmail() != null ? request.getEmail() : user.getEmail(),
-                request.getPassword() != null ? request.getPassword() : user.getPassword()
+                dto.getUsername() != null ? dto.getUsername() : user.getUsername(),
+                dto.getEmail() != null ? dto.getEmail() : user.getEmail(),
+                dto.getPassword() != null ? dto.getPassword() : user.getPassword()
         );
 
         return UserBaseResponse.of(user);
@@ -70,6 +71,18 @@ public class UserServiceImpl implements UserService {
     public void deleteUserById(Long userId) {
         User user = findUserByIdOrThrow(userId);
         userRepository.delete(user);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public UserLoginResponse login(String username, String password) {
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new IllegalArgumentException("User Not Found!")
+        );
+
+        if (user.getPassword().equals(password)) {
+            return UserLoginResponse.of(user.getId(), user.getUsername());
+        } else throw new IllegalArgumentException("Wrong password!");
     }
 
     /**
