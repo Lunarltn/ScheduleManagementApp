@@ -22,7 +22,7 @@ public class LoginFilter implements Filter {
         String requestURI = httpServletRequest.getRequestURI();
 
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-
+        // 화이트 리스트 검사
         if (!isWhiteList(requestURI)) {
             HttpSession httpSession = httpServletRequest.getSession(false);
 
