@@ -6,6 +6,7 @@ import org.example.schedulemanagementapp.domain.user.dto.UserBaseResponse;
 import org.example.schedulemanagementapp.domain.user.dto.UserLoginResponse;
 import org.example.schedulemanagementapp.domain.user.dto.UserUpdateRequest;
 import org.example.schedulemanagementapp.domain.user.entity.User;
+import org.example.schedulemanagementapp.global.config.PasswordEncoder;
 import org.example.schedulemanagementapp.global.exception.CustomException;
 import org.example.schedulemanagementapp.global.exception.ErrorCode;
 import org.example.schedulemanagementapp.domain.user.repository.UserRepository;
@@ -33,11 +34,15 @@ public class UserServiceImpl implements UserService {
         Optional<User> us = userRepository.findByEmail(dto.getEmail());
         if (us.isPresent()) throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
 
+        // 비밀 번호 암호화
+        PasswordEncoder passwordEncoder = new PasswordEncoder();
+        String encodingPassword = passwordEncoder.encode(dto.getPassword());
+
         // 유저 저장
         User user = new User(
                 dto.getUsername(),
                 dto.getEmail(),
-                dto.getPassword()
+                encodingPassword
         );
         User savedUser = userRepository.save(user);
 
@@ -48,7 +53,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserBaseResponse> findAll() {
         List<User> users = userRepository.findAll();
-
         return users.stream().map(UserBaseResponse::of).collect(Collectors.toList());
     }
 
@@ -62,11 +66,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserBaseResponse updateUserById(Long userId, UserUpdateRequest dto) {
         User user = findUserByIdOrThrow(userId);
+        // 비밀 번호 암호화
+        String password = user.getPassword();
+        if (dto.getPassword() != null) {
+            PasswordEncoder passwordEncoder = new PasswordEncoder();
+            password = passwordEncoder.encode(dto.getPassword());
+        }
 
         user.update(
                 dto.getUsername() != null ? dto.getUsername() : user.getUsername(),
                 dto.getEmail() != null ? dto.getEmail() : user.getEmail(),
-                dto.getPassword() != null ? dto.getPassword() : user.getPassword()
+                password
         );
 
         return UserBaseResponse.of(user);
@@ -82,9 +92,13 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public UserLoginResponse login(String email, String password) {
-        User user = userRepository.findByEmailAndPassword(email, password).orElseThrow(
+        User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.AUTH_ERROR)
         );
+        // 비밀 번호 검사
+        PasswordEncoder passwordEncoder = new PasswordEncoder();
+        if (!passwordEncoder.matches(password, user.getPassword()))
+            throw new CustomException(ErrorCode.AUTH_ERROR);
 
         return UserLoginResponse.of(user.getId(), user.getUsername(), user.getEmail());
     }
