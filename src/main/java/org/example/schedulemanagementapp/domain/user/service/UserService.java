@@ -40,18 +40,20 @@ public interface UserService {
     /**
      * 유저 수정
      *
-     * @param userId 유저 아이디
-     * @param dto    유저 기본 요청 DTO
+     * @param sessionId 세션 유저 아이디
+     * @param userId    유저 아이디
+     * @param dto       유저 기본 요청 DTO
      * @return 유저 기본 응답 DTO
      */
-    UserBaseResponse updateUserById(Long userId, UserUpdateRequest dto);
+    UserBaseResponse updateUserById(Long sessionId, Long userId, UserUpdateRequest dto);
 
     /**
      * 유저 삭제
      *
-     * @param userId 유저 아이디
+     * @param sessionId 세션 유저 아이디
+     * @param userId    유저 아이디
      */
-    void deleteUserById(Long userId);
+    void deleteUserById(Long sessionId, Long userId);
 
     /**
      * 사용자 로그인

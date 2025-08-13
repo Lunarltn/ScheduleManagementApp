@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.schedulemanagementapp.domain.user.dto.*;
 import org.example.schedulemanagementapp.global.constant.Const;
 import org.example.schedulemanagementapp.domain.user.service.UserService;
+import org.example.schedulemanagementapp.global.util.SessionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,11 +40,13 @@ public class UserController {
      * 사용자 로그인 처리
      *
      * @param requestDto 유저 로그인 요청 DTO
-     * @param request    HTTP 인증 정보
+     * @param request    HTTP 요청 정보
      * @return HTTP 상태 코드와 유저 로그인 응답 DTO
      */
     @PostMapping("/login")
-    public ResponseEntity<UserLoginResponse> login(@Valid @RequestBody UserLoginRequest requestDto, HttpServletRequest request) {
+    public ResponseEntity<UserLoginResponse> login(@Valid @RequestBody UserLoginRequest requestDto,
+                                                   HttpServletRequest request) {
+
         UserLoginResponse loginResponseDto = userService.login(requestDto.getEmail(), requestDto.getPassword());
         Long userId = loginResponseDto.getId();
 
@@ -57,7 +60,7 @@ public class UserController {
     /**
      * 사용자 로그아웃 처리
      *
-     * @param request HTTP 인증 정보
+     * @param request HTTP 요청 정보
      * @return 상태 코드
      */
     @PostMapping("/logout")
@@ -97,22 +100,33 @@ public class UserController {
      *
      * @param userId     유저 아이디
      * @param requestDto 유저 수정 요청 DTO
+     * @param request    HTTP 요청 정보
      * @return HTTP 상태 코드와 유저 기본 응답 DTO
      */
     @PatchMapping("/{userId}")
-    public ResponseEntity<UserBaseResponse> updateScheduleById(@PathVariable Long userId, @RequestBody UserUpdateRequest requestDto) {
-        return ResponseEntity.ok(userService.updateUserById(userId, requestDto));
+    public ResponseEntity<UserBaseResponse> updateScheduleById(@PathVariable Long userId,
+                                                               @RequestBody UserUpdateRequest requestDto,
+                                                               HttpServletRequest request) {
+        // 로그인 유저 아이디 확인
+        Long sessionId = SessionUtils.GetLoginUserIdBySelvet(request);
+
+        return ResponseEntity.ok(userService.updateUserById(sessionId, userId, requestDto));
     }
 
     /**
      * 유저 삭제
      *
-     * @param userId 유저 아이디
+     * @param userId  유저 아이디
+     * @param request HTTP 요청 정보
      * @return HTTP 상태 코드
      */
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteScheduleById(@PathVariable Long userId) {
-        userService.deleteUserById(userId);
+    public ResponseEntity<Void> deleteScheduleById(@PathVariable Long userId,
+                                                   HttpServletRequest request) {
+        // 로그인 유저 아이디 확인
+        Long sessionId = SessionUtils.GetLoginUserIdBySelvet(request);
+
+        userService.deleteUserById(sessionId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

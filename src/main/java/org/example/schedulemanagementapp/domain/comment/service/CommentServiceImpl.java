@@ -29,14 +29,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
-    private final ScheduleService scheduleService;
-    private final UserService userService;
+    private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     @Override
     public CommentBaseResponse save(Long userId, Long scheduleId, CommentBaseRequest requestDto) {
-        User user = userService.findUserByIdOrThrow(userId);
-        Schedule schedule = scheduleService.findScheduleByIdOrThrow(scheduleId);
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND)
+        );
 
         Comment comment = new Comment(
                 user,
@@ -52,7 +55,8 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     @Override
     public List<CommentBaseResponse> findAllByScheduleId(Long scheduleId) {
-        Schedule schedule = scheduleService.findScheduleByIdOrThrow(scheduleId);
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
         List<Comment> comments = commentRepository.findAllBySchedule(schedule);
 
         return comments.stream().map(CommentBaseResponse::of).collect(Collectors.toList());

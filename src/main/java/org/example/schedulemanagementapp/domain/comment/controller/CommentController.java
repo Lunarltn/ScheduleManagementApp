@@ -9,6 +9,7 @@ import org.example.schedulemanagementapp.domain.comment.dto.CommentBaseResponse;
 import org.example.schedulemanagementapp.domain.comment.service.CommentService;
 import org.example.schedulemanagementapp.domain.user.dto.UserBaseResponse;
 import org.example.schedulemanagementapp.global.constant.Const;
+import org.example.schedulemanagementapp.global.util.SessionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,17 +31,17 @@ public class CommentController {
      * 새로운 댓글 저장
      *
      * @param requestDto 댓글 기본 요청 DTO
+     * @param scheduleId 일정 아이디
      * @return HTTP 상태 코드와 댓글 기본 응답 DTO
      */
     @PostMapping
     public ResponseEntity<CommentBaseResponse> save(@Valid @RequestBody CommentBaseRequest requestDto,
                                                     @PathVariable Long scheduleId,
                                                     HttpServletRequest request) {
-        // 세션 검사
-        HttpSession session = request.getSession(false);
-        Long userId = getUserIdBySession(session);
+        // 로그인 유저 아이디 확인
+        Long loginUserId = SessionUtils.GetLoginUserIdBySelvet(request);
 
-        return new ResponseEntity<>(commentService.save(userId, scheduleId, requestDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(commentService.save(loginUserId, scheduleId, requestDto), HttpStatus.CREATED);
     }
 
     /**
@@ -57,7 +58,8 @@ public class CommentController {
     /**
      * 아이디 댓글 조회
      *
-     * @param commentId 댓글 아이디
+     * @param scheduleId 일정 아이디
+     * @param commentId  댓글 아이디
      * @return HTTP 상태 코드와 댓글 기본 응답 DTO
      */
     @GetMapping("/{commentId}")
@@ -68,8 +70,10 @@ public class CommentController {
     /**
      * 댓글 수정
      *
+     * @param scheduleId 일정 아이디
      * @param commentId  댓글 아이디
      * @param requestDto 댓글 기본 요청 DTO
+     * @param request    HTTP 요청 정보
      * @return HTTP 상태 코드와 댓글 기본 응답 DTO
      */
     @PatchMapping("/{commentId}")
@@ -77,36 +81,28 @@ public class CommentController {
                                                                  @PathVariable Long commentId,
                                                                  @Valid @RequestBody CommentBaseRequest requestDto,
                                                                  HttpServletRequest request) {
-        // 유저 검증
-        HttpSession session = request.getSession(false);
-        Long userId = getUserIdBySession(session);
+        // 로그인 유저 아이디 확인
+        Long loginUserId = SessionUtils.GetLoginUserIdBySelvet(request);
 
-        return ResponseEntity.ok(commentService.updateCommentById(userId, scheduleId, commentId, requestDto));
+        return ResponseEntity.ok(commentService.updateCommentById(loginUserId, scheduleId, commentId, requestDto));
     }
 
     /**
      * 댓글 삭제
      *
-     * @param commentId 댓글 아이디
+     * @param scheduleId 일정 아이디
+     * @param commentId  댓글 아이디
+     * @param request    HTTP 요청 정보
      * @return HTTP 상태 코드
      */
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteCommentById(@PathVariable Long scheduleId,
                                                   @PathVariable Long commentId,
                                                   HttpServletRequest request) {
-        // 유저 검증
-        HttpSession session = request.getSession(false);
-        Long userId = getUserIdBySession(session);
+        // 로그인 유저 아이디 확인
+        Long loginUserId = SessionUtils.GetLoginUserIdBySelvet(request);
 
-        commentService.deleteCommentById(userId, scheduleId, commentId);
+        commentService.deleteCommentById(loginUserId, scheduleId, commentId);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-
-    /**
-     * 세션 유저 아이디 조회
-     */
-    private Long getUserIdBySession(HttpSession session) {
-        return ((UserBaseResponse) session.getAttribute(Const.LOGIN_USER)).getId();
     }
 }

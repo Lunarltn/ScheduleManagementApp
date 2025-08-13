@@ -2,8 +2,10 @@ package org.example.schedulemanagementapp.domain.schedule.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.schedulemanagementapp.domain.comment.entity.Comment;
+import org.example.schedulemanagementapp.domain.comment.repository.CommentRepository;
 import org.example.schedulemanagementapp.domain.schedule.dto.ScheduleBaseRequest;
 import org.example.schedulemanagementapp.domain.schedule.dto.ScheduleBaseResponse;
+import org.example.schedulemanagementapp.domain.schedule.dto.SchedulePageResponse;
 import org.example.schedulemanagementapp.domain.schedule.dto.SchedulerUpdateRequest;
 import org.example.schedulemanagementapp.domain.schedule.entity.Schedule;
 import org.example.schedulemanagementapp.domain.schedule.repository.ScheduleRepository;
@@ -12,6 +14,9 @@ import org.example.schedulemanagementapp.domain.user.repository.UserRepository;
 import org.example.schedulemanagementapp.domain.user.service.UserService;
 import org.example.schedulemanagementapp.global.exception.CustomException;
 import org.example.schedulemanagementapp.global.exception.ErrorCode;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,12 +35,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     @Override
     public ScheduleBaseResponse save(Long userId, ScheduleBaseRequest requestDto) {
-        User user = userService.findUserByIdOrThrow(userId);
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
         Schedule schedule = new Schedule(
                 user,
                 requestDto.getTitle(),
@@ -49,10 +56,15 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<ScheduleBaseResponse> findAll() {
-        List<Schedule> schedules = scheduleRepository.findAll();
+    public Page<SchedulePageResponse> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
 
-        return schedules.stream().map(ScheduleBaseResponse::of).collect(Collectors.toList());
+        Page<Schedule> schedulePage = scheduleRepository.findAllByOrderByModifiedAtDesc(pageable);
+
+        return schedulePage.map(schedule -> {
+            int commentCount = commentRepository.countBySchedule(schedule);
+            return SchedulePageResponse.of(schedule, commentCount);
+        });
     }
 
     @Transactional(readOnly = true)
@@ -94,6 +106,20 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND)
         );
+    }
+
+    @Transactional
+    @Override
+    public void deleteAllScheduleByUser(User user) {
+
+        List<Schedule> schedules = scheduleRepository.findAllByUser(user);
+        schedules.forEach(this::deleteScheduleByScheduleId);
+    }
+
+    @Transactional
+    public void deleteScheduleByScheduleId(Schedule schedule) {
+        commentRepository.deleteAllBySchedule(schedule);
+        scheduleRepository.delete(schedule);
     }
 
     /**

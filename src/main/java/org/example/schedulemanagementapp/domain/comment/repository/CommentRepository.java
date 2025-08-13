@@ -9,4 +9,8 @@ import java.util.List;
 // 댓글 레포지토리
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findAllBySchedule(Schedule schedule);
+
+    void deleteAllBySchedule(Schedule schedule);
+
+    int countBySchedule(Schedule schedule);
 }

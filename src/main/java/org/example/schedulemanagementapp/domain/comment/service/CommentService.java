@@ -34,7 +34,8 @@ public interface CommentService {
     /**
      * 아이디 댓글 조회
      *
-     * @param commentId 댓글 아이디
+     * @param scheduleId 일정 아이디
+     * @param commentId  댓글 아이디
      * @return 댓글 기본 응답 DTO
      */
     CommentBaseResponse findCommentById(Long scheduleId, Long commentId);
@@ -43,6 +44,7 @@ public interface CommentService {
      * 댓글 수정
      *
      * @param userId     유저 아이디
+     * @param scheduleId 일정 아이디
      * @param commentId  댓글 아이디
      * @param requestDto 댓글 기본 요청 DTO
      * @return 댓글 기본 응답 DTO
@@ -52,8 +54,9 @@ public interface CommentService {
     /**
      * 댓글 삭제
      *
-     * @param userId    유저 아이디
-     * @param commentId 댓글 아이디
+     * @param userId     유저 아이디
+     * @param scheduleId 일정 아이디
+     * @param commentId  댓글 아이디
      */
     void deleteCommentById(Long userId, Long scheduleId, Long commentId);
 

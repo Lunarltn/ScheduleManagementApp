@@ -2,8 +2,11 @@ package org.example.schedulemanagementapp.domain.schedule.service;
 
 import org.example.schedulemanagementapp.domain.schedule.dto.ScheduleBaseRequest;
 import org.example.schedulemanagementapp.domain.schedule.dto.ScheduleBaseResponse;
+import org.example.schedulemanagementapp.domain.schedule.dto.SchedulePageResponse;
 import org.example.schedulemanagementapp.domain.schedule.dto.SchedulerUpdateRequest;
 import org.example.schedulemanagementapp.domain.schedule.entity.Schedule;
+import org.example.schedulemanagementapp.domain.user.entity.User;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -25,9 +28,11 @@ public interface ScheduleService {
     /**
      * 전체 일정 조회
      *
-     * @return 일정 기본 응답 DTO의 List
+     * @param page 현재 페이지
+     * @param size 페이지 크기
+     * @return 일정 기본 응답 DTO의 Page
      */
-    List<ScheduleBaseResponse> findAll();
+    Page<SchedulePageResponse> findAll(int page, int size);
 
     /**
      * 아이디 일정 조회
@@ -62,4 +67,6 @@ public interface ScheduleService {
      * @return 일정 엔티티
      */
     Schedule findScheduleByIdOrThrow(Long scheduleId);
+
+    void deleteAllScheduleByUser(User user);
 }

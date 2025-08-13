@@ -1,12 +1,13 @@
 package org.example.schedulemanagementapp.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.schedulemanagementapp.domain.schedule.service.ScheduleService;
 import org.example.schedulemanagementapp.domain.user.dto.UserBaseRequest;
 import org.example.schedulemanagementapp.domain.user.dto.UserBaseResponse;
 import org.example.schedulemanagementapp.domain.user.dto.UserLoginResponse;
 import org.example.schedulemanagementapp.domain.user.dto.UserUpdateRequest;
 import org.example.schedulemanagementapp.domain.user.entity.User;
-import org.example.schedulemanagementapp.global.config.PasswordEncoder;
+import org.example.schedulemanagementapp.global.util.PasswordEncoder;
 import org.example.schedulemanagementapp.global.exception.CustomException;
 import org.example.schedulemanagementapp.global.exception.ErrorCode;
 import org.example.schedulemanagementapp.domain.user.repository.UserRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final ScheduleService scheduleService;
 
     @Transactional
     @Override
@@ -64,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserBaseResponse updateUserById(Long userId, UserUpdateRequest dto) {
+    public UserBaseResponse updateUserById(Long sessionId, Long userId, UserUpdateRequest dto) {
         User user = findUserByIdOrThrow(userId);
         // 비밀 번호 암호화
         String password = user.getPassword();
@@ -84,8 +87,14 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void deleteUserById(Long userId) {
+    public void deleteUserById(Long sessionId, Long userId) {
         User user = findUserByIdOrThrow(userId);
+
+        // 유저 검증
+        if (!Objects.equals(sessionId, user.getId()))
+            throw new CustomException(ErrorCode.NO_PERMISSION);
+
+        scheduleService.deleteAllScheduleByUser(user);
         userRepository.delete(user);
     }
 

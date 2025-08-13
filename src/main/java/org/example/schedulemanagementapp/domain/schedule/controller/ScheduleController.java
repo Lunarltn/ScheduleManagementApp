@@ -6,10 +6,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.schedulemanagementapp.domain.schedule.dto.ScheduleBaseRequest;
 import org.example.schedulemanagementapp.domain.schedule.dto.ScheduleBaseResponse;
+import org.example.schedulemanagementapp.domain.schedule.dto.SchedulePageResponse;
 import org.example.schedulemanagementapp.domain.schedule.dto.SchedulerUpdateRequest;
 import org.example.schedulemanagementapp.domain.schedule.service.ScheduleService;
 import org.example.schedulemanagementapp.domain.user.dto.UserBaseResponse;
 import org.example.schedulemanagementapp.global.constant.Const;
+import org.example.schedulemanagementapp.global.util.SessionUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,26 +34,32 @@ public class ScheduleController {
      * 새로운 일정 저장
      *
      * @param requestDto 일정 기본 요청 DTO
+     * @param request    HTTP 요청 정보
      * @return HTTP 상태 코드와 일정 기본 응답 DTO
      */
     @PostMapping
     public ResponseEntity<ScheduleBaseResponse> save(@Valid @RequestBody ScheduleBaseRequest requestDto,
-                                                     HttpServletRequest request) {
-        // 세션 검사
-        HttpSession session = request.getSession(false);
-        Long userId = getUserIdBySession(session);
+                                                     HttpServletRequest request
+    ) {
+        // 로그인 유저 아이디 확인
+        Long loginUserId = SessionUtils.GetLoginUserIdBySelvet(request);
 
-        return new ResponseEntity<>(scheduleService.save(userId, requestDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(scheduleService.save(loginUserId, requestDto), HttpStatus.CREATED);
     }
 
     /**
-     * 전체 일정 조회
+     * 전체 일정 페이징 조회
      *
+     * @param page 현제 페이지
+     * @param size 페이지 크기
      * @return HTTP 상태 코드와 일정 기본 요청 DTO의 List
      */
     @GetMapping
-    public ResponseEntity<List<ScheduleBaseResponse>> findAll() {
-        return ResponseEntity.ok(scheduleService.findAll());
+    public ResponseEntity<List<SchedulePageResponse>> findAll(@RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "10") int size) {
+        Page<SchedulePageResponse> schedulePage = scheduleService.findAll(page, size);
+
+        return ResponseEntity.ok(schedulePage.getContent());
     }
 
     /**
@@ -69,39 +78,32 @@ public class ScheduleController {
      *
      * @param scheduleId 일정 아이디
      * @param requestDto 일정 수정 요청 DTO
+     * @param request    HTTP 요청 정보
      * @return HTTP 상태 코드와 일정 기본 응답 DTO
      */
     @PatchMapping("/{scheduleId}")
     public ResponseEntity<ScheduleBaseResponse> updateScheduleById(@PathVariable Long scheduleId,
                                                                    @Valid @RequestBody SchedulerUpdateRequest requestDto,
                                                                    HttpServletRequest request) {
-        // 유저 검증
-        HttpSession session = request.getSession(false);
-        Long userId = getUserIdBySession(session);
+        // 로그인 유저 아이디 확인
+        Long loginUserId = SessionUtils.GetLoginUserIdBySelvet(request);
 
-        return ResponseEntity.ok(scheduleService.updateScheduleById(userId, scheduleId, requestDto));
+        return ResponseEntity.ok(scheduleService.updateScheduleById(loginUserId, scheduleId, requestDto));
     }
 
     /**
      * 일정 삭제
      *
      * @param scheduleId 일정 아이디
+     * @param request    HTTP 요청 정보
      * @return HTTP 상태 코드
      */
     @DeleteMapping("/{scheduleId}")
     public ResponseEntity<Void> deleteScheduleById(@PathVariable Long scheduleId, HttpServletRequest request) {
-        // 유저 검증
-        HttpSession session = request.getSession(false);
-        Long userId = getUserIdBySession(session);
+        // 로그인 유저 아이디 확인
+        Long loginUserId = SessionUtils.GetLoginUserIdBySelvet(request);
 
-        scheduleService.deleteScheduleById(userId, scheduleId);
+        scheduleService.deleteScheduleById(loginUserId, scheduleId);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    /**
-     * 세션 유저 아이디 조회
-     */
-    private Long getUserIdBySession(HttpSession session) {
-        return ((UserBaseResponse) session.getAttribute(Const.LOGIN_USER)).getId();
     }
 }
