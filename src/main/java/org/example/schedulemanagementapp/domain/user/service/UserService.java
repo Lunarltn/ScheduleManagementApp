@@ -4,6 +4,7 @@ import org.example.schedulemanagementapp.domain.user.dto.UserBaseRequest;
 import org.example.schedulemanagementapp.domain.user.dto.UserBaseResponse;
 import org.example.schedulemanagementapp.domain.user.dto.UserLoginResponse;
 import org.example.schedulemanagementapp.domain.user.dto.UserUpdateRequest;
+import org.example.schedulemanagementapp.domain.user.entity.User;
 
 import java.util.List;
 
@@ -61,4 +62,12 @@ public interface UserService {
      * @return 유저 로그인 응답 DTO
      */
     UserLoginResponse login(String email, String password);
+
+    /**
+     * 레포지토리에서 아이디로 유저 엔티티를 찾아 반환하고 없다면 예외 발생
+     *
+     * @param userId 유저 아이디
+     * @return 유저 엔티티
+     */
+    User findUserByIdOrThrow(Long userId);
 }

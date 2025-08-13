@@ -32,7 +32,7 @@ public class ScheduleGetOneResponse {
 
         return new ScheduleGetOneResponse(
                 schedule.getId(),
-                schedule.getUserId(),
+                schedule.getUser().getId(),
                 schedule.getTitle(),
                 schedule.getContent(),
                 schedule.getCreatedAt(),

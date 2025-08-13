@@ -3,6 +3,7 @@ package org.example.schedulemanagementapp.domain.schedule.service;
 import org.example.schedulemanagementapp.domain.schedule.dto.ScheduleBaseRequest;
 import org.example.schedulemanagementapp.domain.schedule.dto.ScheduleBaseResponse;
 import org.example.schedulemanagementapp.domain.schedule.dto.SchedulerUpdateRequest;
+import org.example.schedulemanagementapp.domain.schedule.entity.Schedule;
 
 import java.util.List;
 
@@ -15,15 +16,16 @@ public interface ScheduleService {
     /**
      * 새로운 일정 저장
      *
-     * @param dto 일정 기본 요청 DTO
+     * @param userId     유저 아이디
+     * @param requestDto 일정 기본 요청 DTO
      * @return 일정 기본 응답 DTO
      */
-    ScheduleBaseResponse save(ScheduleBaseRequest dto);
+    ScheduleBaseResponse save(Long userId, ScheduleBaseRequest requestDto);
 
     /**
      * 전체 일정 조회
      *
-     * @return 일정 기본 요청 DTO의 List
+     * @return 일정 기본 응답 DTO의 List
      */
     List<ScheduleBaseResponse> findAll();
 
@@ -38,16 +40,26 @@ public interface ScheduleService {
     /**
      * 일정 수정
      *
+     * @param userId     유저 아이디
      * @param scheduleId 일정 아이디
-     * @param dto        일정 수정 요청 DTO
-     * @return 일정 기본 요청 DTO
+     * @param requestDto 일정 수정 요청 DTO
+     * @return 일정 기본 응답 DTO
      */
-    ScheduleBaseResponse updateScheduleById(Long scheduleId, SchedulerUpdateRequest dto);
+    ScheduleBaseResponse updateScheduleById(Long userId, Long scheduleId, SchedulerUpdateRequest requestDto);
 
     /**
      * 일정 삭제
      *
+     * @param userId     유저 아이디
      * @param scheduleId 일정 아이디
      */
-    void deleteScheduleById(Long scheduleId);
+    void deleteScheduleById(Long userId, Long scheduleId);
+
+    /**
+     * 레포지토리에서 아이디로 일정 엔티티를 찾아 반환하고 없다면 예외 발생
+     *
+     * @param scheduleId 일정 아이디
+     * @return 일정 엔티티
+     */
+    Schedule findScheduleByIdOrThrow(Long scheduleId);
 }

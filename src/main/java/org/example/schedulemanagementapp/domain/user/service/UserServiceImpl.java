@@ -103,13 +103,9 @@ public class UserServiceImpl implements UserService {
         return UserLoginResponse.of(user.getId(), user.getUsername(), user.getEmail());
     }
 
-    /**
-     * 레포지토리에서 아이디를 찾아 유저 엔티티를 반환하고 없다면 예외 발생
-     *
-     * @param userId 유저 아이디
-     * @return 유저 엔티티
-     */
-    private User findUserByIdOrThrow(Long userId) {
+    @Transactional(readOnly = true)
+    @Override
+    public User findUserByIdOrThrow(Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }

@@ -27,24 +27,24 @@ public class UserController {
     /**
      * 새로운 유저 저장
      *
-     * @param dto 유저 기본 요청 DTO
+     * @param requestDto 유저 기본 요청 DTO
      * @return HTTP 상태 코드와 유저 기본 응답 DTO
      */
     @PostMapping("/signup")
-    public ResponseEntity<UserBaseResponse> save(@Valid @RequestBody UserBaseRequest dto) {
-        return new ResponseEntity<>(userService.save(dto), HttpStatus.CREATED);
+    public ResponseEntity<UserBaseResponse> save(@Valid @RequestBody UserBaseRequest requestDto) {
+        return new ResponseEntity<>(userService.save(requestDto), HttpStatus.CREATED);
     }
 
     /**
      * 사용자 로그인 처리
      *
-     * @param dto     유저 로그인 요청 DTO
-     * @param request HTTP 인증 정보
+     * @param requestDto 유저 로그인 요청 DTO
+     * @param request    HTTP 인증 정보
      * @return HTTP 상태 코드와 유저 로그인 응답 DTO
      */
     @PostMapping("/login")
-    public ResponseEntity<UserLoginResponse> login(@Valid @RequestBody UserLoginRequest dto, HttpServletRequest request) {
-        UserLoginResponse loginResponseDto = userService.login(dto.getEmail(), dto.getPassword());
+    public ResponseEntity<UserLoginResponse> login(@Valid @RequestBody UserLoginRequest requestDto, HttpServletRequest request) {
+        UserLoginResponse loginResponseDto = userService.login(requestDto.getEmail(), requestDto.getPassword());
         Long userId = loginResponseDto.getId();
 
         HttpSession session = request.getSession();
@@ -95,13 +95,13 @@ public class UserController {
     /**
      * 유저 수정
      *
-     * @param userId 유저 아이디
-     * @param dto    유저 수정 요청 DTO
+     * @param userId     유저 아이디
+     * @param requestDto 유저 수정 요청 DTO
      * @return HTTP 상태 코드와 유저 기본 응답 DTO
      */
     @PatchMapping("/{userId}")
-    public ResponseEntity<UserBaseResponse> updateScheduleById(@PathVariable Long userId, @RequestBody UserUpdateRequest dto) {
-        return ResponseEntity.ok(userService.updateUserById(userId, dto));
+    public ResponseEntity<UserBaseResponse> updateScheduleById(@PathVariable Long userId, @RequestBody UserUpdateRequest requestDto) {
+        return ResponseEntity.ok(userService.updateUserById(userId, requestDto));
     }
 
     /**

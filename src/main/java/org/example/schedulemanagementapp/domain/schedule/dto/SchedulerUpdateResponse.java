@@ -31,7 +31,7 @@ public class SchedulerUpdateResponse {
     public static SchedulerUpdateResponse of(Schedule schedule) {
         return new SchedulerUpdateResponse(
                 schedule.getId(),
-                schedule.getUserId(),
+                schedule.getUser().getId(),
                 schedule.getTitle(),
                 schedule.getContent(),
                 schedule.getCreatedAt(),

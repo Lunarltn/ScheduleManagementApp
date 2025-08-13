@@ -10,11 +10,22 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
+    // 값 관련
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "VAL-001", "입력값이 유효하지 않습니다."),
+
+    // 일정 관련
+    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "SCH-001", "일정을 찾을 수 없습니다."),
+
+    // 댓글 관련
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "CMT-001", "댓글을 찾을 수 없습니다."),
+
+    // 유저 관련
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "USR-001", "이미 가입된 이메일입니다."),
     AUTH_ERROR(HttpStatus.UNAUTHORIZED, "USR-002", "아이디 또는 비밀번호가 잘못되었습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USR-003", "유저를 찾을 수 없습니다."),
-    NEED_AUTH(HttpStatus.UNAUTHORIZED, "USR-004", "로그인이 필요한 서비스 입니다.");
+    NEED_AUTH(HttpStatus.UNAUTHORIZED, "USR-004", "로그인이 필요한 서비스 입니다."),
+    NO_PERMISSION(HttpStatus.FORBIDDEN, "USR-005", "권한이 없어 요청을 수행할 수 없습니다.");
+
 
     private final HttpStatus status;
     private final String code;
