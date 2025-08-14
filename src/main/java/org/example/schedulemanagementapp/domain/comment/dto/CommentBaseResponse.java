@@ -7,12 +7,12 @@ import java.time.LocalDateTime;
 
 @Getter
 public class CommentBaseResponse {
-    Long id;
-    Long scheduleId;
-    Long userId;
-    String content;
-    LocalDateTime createdAt;
-    LocalDateTime modifiedAt;
+    private final Long id;
+    private final Long scheduleId;
+    private final Long userId;
+    private final String content;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime modifiedAt;
 
     private CommentBaseResponse(Long id, Long scheduleId, Long userId, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;

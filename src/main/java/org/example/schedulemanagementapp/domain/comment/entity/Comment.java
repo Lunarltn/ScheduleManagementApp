@@ -19,10 +19,10 @@ import org.example.schedulemanagementapp.global.entity.BaseEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends BaseEntity {
     @ManyToOne
-    @JoinColumn(name = "scheduleId")
+    @JoinColumn(name = "schedule_id")
     private Schedule schedule;
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private User user;
     @Setter
     private String content;

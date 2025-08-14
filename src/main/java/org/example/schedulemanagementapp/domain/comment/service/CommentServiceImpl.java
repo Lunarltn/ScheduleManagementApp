@@ -55,6 +55,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     @Override
     public List<CommentBaseResponse> findAllByScheduleId(Long scheduleId) {
+        // 일정 아이디 검사
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
         List<Comment> comments = commentRepository.findAllBySchedule(schedule);
@@ -65,22 +66,33 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     @Override
     public CommentBaseResponse findCommentById(Long scheduleId, Long commentId) {
-        Comment comment = findCommentByIdOrThrow(commentId);
         // 일정 아이디 검사
-        if (!CheckScheduleIdInComment(comment, scheduleId))
+        if (notExistsScheduleIdInScheduleRepository(scheduleId))
             throw new CustomException(ErrorCode.SCHEDULE_NOT_FOUND);
+
+        Comment comment = findCommentByIdOrThrow(commentId);
+
+        // 댓글 엔티티의 일정 아이디값과 입력받은 일정 아이디 검사
+        if (notExistsScheduleIdInComment(comment, scheduleId))
+            throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
         return commentRepository.findById(commentId).map(CommentBaseResponse::of).orElse(null);
     }
 
     @Transactional
     @Override
     public CommentBaseResponse updateCommentById(Long userId, Long scheduleId, Long commentId, CommentBaseRequest requestDto) {
-        Comment comment = findCommentByIdOrThrow(commentId);
         // 일정 아이디 검사
-        if (!CheckScheduleIdInComment(comment, scheduleId))
+        if (notExistsScheduleIdInScheduleRepository(scheduleId))
             throw new CustomException(ErrorCode.SCHEDULE_NOT_FOUND);
+
+        Comment comment = findCommentByIdOrThrow(commentId);
+
+        // 댓글 엔티티의 일정 아이디값과 입력받은 일정 아이디 검사
+        if (notExistsScheduleIdInComment(comment, scheduleId))
+            throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
+
         // 유저 검증
-        if (!CheckUserIdInComment(comment, userId))
+        if (notExistsUserIdInComment(comment, userId))
             throw new CustomException(ErrorCode.NO_PERMISSION);
 
         comment.setContent(requestDto.getContent());
@@ -91,12 +103,18 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public void deleteCommentById(Long userId, Long scheduleId, Long commentId) {
-        Comment comment = findCommentByIdOrThrow(commentId);
         // 일정 아이디 검사
-        if (!CheckScheduleIdInComment(comment, scheduleId))
+        if (notExistsScheduleIdInScheduleRepository(scheduleId))
             throw new CustomException(ErrorCode.SCHEDULE_NOT_FOUND);
+
+        Comment comment = findCommentByIdOrThrow(commentId);
+
+        // 댓글 엔티티의 일정 아이디값과 입력받은 일정 아이디 검사
+        if (notExistsScheduleIdInComment(comment, scheduleId))
+            throw new CustomException(ErrorCode.COMMENT_NOT_FOUND);
+
         // 유저 검증
-        if (!CheckUserIdInComment(comment, userId))
+        if (notExistsUserIdInComment(comment, userId))
             throw new CustomException(ErrorCode.NO_PERMISSION);
 
         commentRepository.delete(comment);
@@ -111,22 +129,34 @@ public class CommentServiceImpl implements CommentService {
     }
 
     /**
-     * 댓글 작성자 아이디를 확인하고 비교값 반환
+     * 댓글 엔티티의 유저 아이디와 매개 변수로 받은 유저 아이디가 다른지 여부 반환
      *
-     * @param comment 댓글 엔티티
+     * @param comment 검사할 댓글 엔티티
      * @param userId  유저 아이디
+     * @return 다르면 ture, 같다면 false
      */
-    private boolean CheckUserIdInComment(Comment comment, Long userId) {
-        return Objects.equals(comment.getUser().getId(), userId);
+    private boolean notExistsUserIdInComment(Comment comment, Long userId) {
+        return !Objects.equals(comment.getUser().getId(), userId);
     }
 
     /**
-     * 댓글 일정 아이디를 확인하고 비교값 반환
+     * 댓글 엔티티의 일정 아이디와 매개 변수로 받은 일정 아이디가 다른지 여부 반환
      *
-     * @param comment    댓글 엔티티
+     * @param comment    검사할 댓글 엔티티
      * @param scheduleId 일정 아이디
+     * @return 다르면 ture, 같다면 false
      */
-    private boolean CheckScheduleIdInComment(Comment comment, Long scheduleId) {
-        return Objects.equals(comment.getSchedule().getId(), scheduleId);
+    private boolean notExistsScheduleIdInComment(Comment comment, Long scheduleId) {
+        return !Objects.equals(comment.getSchedule().getId(), scheduleId);
+    }
+
+    /**
+     * 일정 레포지토리에 매개 변수로 받은 일정 아이디값이 존재하는지 여부 반환
+     *
+     * @param scheduleId 일정 아이디
+     * @return 없다면 ture, 있다면 false
+     */
+    private boolean notExistsScheduleIdInScheduleRepository(Long scheduleId) {
+        return !scheduleRepository.existsById(scheduleId);
     }
 }

@@ -105,7 +105,7 @@ public class UserController {
      */
     @PatchMapping("/{userId}")
     public ResponseEntity<UserBaseResponse> updateScheduleById(@PathVariable Long userId,
-                                                               @RequestBody UserUpdateRequest requestDto,
+                                                               @Valid @RequestBody UserUpdateRequest requestDto,
                                                                HttpServletRequest request) {
         // 로그인 유저 아이디 확인
         Long sessionId = SessionUtils.GetLoginUserIdBySelvet(request);

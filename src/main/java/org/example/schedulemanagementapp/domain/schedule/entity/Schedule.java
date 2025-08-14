@@ -6,10 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.schedulemanagementapp.domain.user.entity.User;
 import org.example.schedulemanagementapp.global.entity.BaseEntity;
-import org.example.schedulemanagementapp.domain.comment.entity.Comment;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 일정 엔티티
@@ -21,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Schedule extends BaseEntity {
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
     @Column(nullable = false, length = 10)
     private String title;

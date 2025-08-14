@@ -1,4 +1,4 @@
-package org.example.schedulemanagementapp.domain.user.dto;
+package org.example.schedulemanagementapp.global.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -6,14 +6,14 @@ import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 
 @Getter
-public class UserErrorResponse {
+public class ErrorResponse {
     private final int status;
     private final String errorCode;
     private final String errorMessage;
     private final String path;
     private final LocalDateTime timestamp;
 
-    private UserErrorResponse(int status, String errorCode, String errorMessage, String path) {
+    private ErrorResponse(int status, String errorCode, String errorMessage, String path) {
         this.status = status;
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
@@ -21,7 +21,7 @@ public class UserErrorResponse {
         this.timestamp = LocalDateTime.now();
     }
 
-    public static UserErrorResponse of(HttpStatus status, String errorCode, String errorMessage, String path) {
-        return new UserErrorResponse(status.value(), errorCode, errorMessage, path);
+    public static ErrorResponse of(HttpStatus status, String errorCode, String errorMessage, String path) {
+        return new ErrorResponse(status.value(), errorCode, errorMessage, path);
     }
 }

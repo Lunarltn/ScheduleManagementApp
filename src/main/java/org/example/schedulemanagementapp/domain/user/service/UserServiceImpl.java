@@ -68,7 +68,16 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserBaseResponse updateUserById(Long sessionId, Long userId, UserUpdateRequest dto) {
+        // 이메일 중복 검사
+        Optional<User> us = userRepository.findByEmail(dto.getEmail());
+        if (us.isPresent()) throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
+
         User user = findUserByIdOrThrow(userId);
+
+        // 유저 검증
+        if (!Objects.equals(sessionId, user.getId()))
+            throw new CustomException(ErrorCode.NO_PERMISSION);
+
         // 비밀 번호 암호화
         String password = user.getPassword();
         if (dto.getPassword() != null) {

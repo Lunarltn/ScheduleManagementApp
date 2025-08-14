@@ -1,7 +1,6 @@
 package org.example.schedulemanagementapp.global.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.example.schedulemanagementapp.domain.user.dto.UserErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -22,9 +21,9 @@ public class GlobalExceptionHandler {
      * @return 유저 에러 응답 DTO
      */
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<UserErrorResponse> handleCustom(CustomException ex,
-                                                          HttpServletRequest request) {
-        UserErrorResponse error = UserErrorResponse.of(ex.getStatus(), ex.getCode(), ex.getMessage(), request.getRequestURI());
+    public ResponseEntity<ErrorResponse> handleCustom(CustomException ex,
+                                                      HttpServletRequest request) {
+        ErrorResponse error = ErrorResponse.of(ex.getStatus(), ex.getCode(), ex.getMessage(), request.getRequestURI());
         return new ResponseEntity<>(error, ex.getStatus());
     }
 
@@ -36,10 +35,10 @@ public class GlobalExceptionHandler {
      * @return 유저 에러 응답 DTO
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<UserErrorResponse> handleValidation(MethodArgumentNotValidException ex,
-                                                              HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex,
+                                                          HttpServletRequest request) {
         String message = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
-        UserErrorResponse error = UserErrorResponse.of(HttpStatus.BAD_REQUEST, "VAL-000", message, request.getRequestURI());
+        ErrorResponse error = ErrorResponse.of(HttpStatus.BAD_REQUEST, "VAL-000", message, request.getRequestURI());
         return ResponseEntity.badRequest().body(error);
     }
 }
